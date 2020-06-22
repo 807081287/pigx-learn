@@ -25,6 +25,8 @@ import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.pig4cloud.pigx.admin.api.dto.UserDTO;
 import com.pig4cloud.pigx.admin.api.entity.SysUser;
 import com.pig4cloud.pigx.admin.service.SysUserService;
+import com.pig4cloud.pigx.common.core.util.ExcelExport;
+import com.pig4cloud.pigx.common.core.util.ExcelReaderUtils;
 import com.pig4cloud.pigx.common.core.util.R;
 import com.pig4cloud.pigx.common.log.annotation.SysLog;
 import com.pig4cloud.pigx.common.security.annotation.Inner;
@@ -32,10 +34,17 @@ import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiImplicitParam;
 import io.swagger.annotations.ApiOperation;
 import lombok.AllArgsConstructor;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.core.userdetails.User;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
+import javax.servlet.http.HttpServletResponse;
 import javax.validation.Valid;
+import java.io.IOException;
+import java.util.List;
 
 /**
  * @author lengleng
@@ -46,6 +55,9 @@ import javax.validation.Valid;
 @RequestMapping("/user")
 @Api(value = "user", tags = "用户管理模块")
 public class SysUserController {
+
+	private static final Logger logger = LoggerFactory.getLogger(SysUserController.class);
+
 	private final SysUserService userService;
 
 	/**
@@ -162,4 +174,71 @@ public class SysUserController {
 	public R listAncestorUsers(@PathVariable String username) {
 		return R.ok(userService.listAncestorUsers(username));
 	}
+
+	/**
+	 * excel数据  批量插入
+	 *
+	 * @param file
+	 * @param cusId
+	 * @return
+	 */
+	@RequestMapping("/addBatchDevice")
+	@ResponseBody
+	@CrossOrigin
+	public R addBatchDevice(MultipartFile file, @RequestParam String cusId) {
+		try {
+			//读取excel表格  返回的list是读取出的每一行数据
+			List<List<String>> lists = ExcelReaderUtils.readExcel(file.getInputStream());
+			//根据每一行的数据封装成javabean
+			//mangeService.addBatchFarmDevice(lists, cusId);
+		} catch (IOException e) {
+			e.printStackTrace();
+			return R.failed();
+		}
+		return R.ok();
+	}
+
+	/**
+	 * 导出Excel所有
+	 *
+	 * @param response
+	 */
+	@GetMapping("/exportForXls")
+	@ResponseBody
+	@CrossOrigin
+	public void exportExcel(HttpServletResponse response, Long companyId) {
+		List<SysUser> list = userService.list();
+		ExcelExport excelExport = new ExcelExport(response, "数据字典总数据", "sheet1");
+		excelExport.writeExcel(new String[]{"code", "name", "enName", "level", "sort"}
+				, new String[]{"编号", "名称", "英文名称", "层级", "排序"}
+				, new int[]{30, 30, 30, 30, 30}, list);
+	}
+
+
+	/**
+	 * excel数据  牧场数据导出xlsx
+	 *
+	 * @param cusId
+	 * @return
+	 */
+	@GetMapping("/exportForXlsx")
+	@ResponseBody
+	@CrossOrigin
+	public void export(@RequestParam String cusId, HttpServletResponse response) {
+		List<SysUser> list = userService.list();
+		if (list.size() > 0) {
+			ExcelExport excelExport = new ExcelExport();
+			String title = "客户数据导出Excel";
+			String[] titleColumn = {"farmName", "farmContactName"}; //该牧场名称对应的属性farmName
+			String[] titleName = {"牧场名称", "牧场主"}; //表头，列名
+			int[] titleSize = {20, 20};//单元格宽高
+			excelExport.writeBigExcel(response, title, titleColumn, titleName, titleSize, list);
+		} else {
+			logger.info("该客户下没有牧场！");
+		}
+
+	}
+
+
+
 }
