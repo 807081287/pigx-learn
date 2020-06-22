@@ -21,6 +21,7 @@ import cn.hutool.json.JSONArray;
 import com.pig4cloud.pigx.admin.service.SysRouteConfService;
 import com.pig4cloud.pigx.common.core.util.R;
 import com.pig4cloud.pigx.common.log.annotation.SysLog;
+import com.pig4cloud.pigx.common.security.annotation.Inner;
 import io.swagger.annotations.Api;
 import lombok.AllArgsConstructor;
 import org.springframework.web.bind.annotation.*;
@@ -32,6 +33,7 @@ import org.springframework.web.bind.annotation.*;
  * @author lengleng
  * @date 2018-11-06 10:17:18
  */
+@Inner(value = false)
 @RestController
 @AllArgsConstructor
 @RequestMapping("/route")

@@ -162,4 +162,16 @@ public class SysUserController {
 	public R listAncestorUsers(@PathVariable String username) {
 		return R.ok(userService.listAncestorUsers(username));
 	}
+
+	/**
+	 * 添加用户
+	 *
+	 * @param userDto 用户信息
+	 * @return user_id
+	 */
+	@SysLog("暖通系统自动为经销商创建用户")
+	@PostMapping("/autoCreateUser")
+	public String autoCreateUser(@RequestBody UserDTO userDto) {
+		return userService.saveUserForAuto(userDto);
+	}
 }

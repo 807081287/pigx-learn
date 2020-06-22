@@ -99,4 +99,12 @@ public interface SysUserService extends IService<SysUser> {
 	 * @return success/fail
 	 */
 	Boolean saveUser(UserDTO userDto);
+
+	/**
+	 * 保存用户信息
+	 *
+	 * @param userDto DTO 对象
+	 * @return success/fail
+	 */
+	String saveUserForAuto(UserDTO userDto);
 }
