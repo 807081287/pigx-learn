@@ -19,15 +19,17 @@
 
 package com.pig4cloud.pigx.admin.api.feign;
 
+import com.pig4cloud.pigx.admin.api.dto.UserDTO;
 import com.pig4cloud.pigx.admin.api.dto.UserInfo;
 import com.pig4cloud.pigx.admin.api.entity.SysUser;
 import com.pig4cloud.pigx.common.core.constant.SecurityConstants;
 import com.pig4cloud.pigx.common.core.constant.ServiceNameConstants;
 import com.pig4cloud.pigx.common.core.util.R;
+import feign.Contract;
 import org.springframework.cloud.openfeign.FeignClient;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestHeader;
+import org.springframework.cloud.openfeign.SpringQueryMap;
+import org.springframework.context.annotation.Bean;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
@@ -37,6 +39,7 @@ import java.util.List;
  */
 @FeignClient(contextId = "remoteUserService", value = ServiceNameConstants.UPMS_SERVICE)
 public interface RemoteUserService {
+
 	/**
 	 * 通过用户名查询用户、角色信息
 	 *
@@ -67,4 +70,13 @@ public interface RemoteUserService {
 	 */
 	@GetMapping("/user/ancestor/{username}")
 	R<List<SysUser>> ancestorUsers(@PathVariable("username") String username);
+
+	/**
+	 * 添加用户
+	 *
+	 * @param userDto 用户信息
+	 * @return user_id
+	 */
+	@PostMapping("/user/autoCreateUser")
+	String user(@RequestBody UserDTO userDto);
 }

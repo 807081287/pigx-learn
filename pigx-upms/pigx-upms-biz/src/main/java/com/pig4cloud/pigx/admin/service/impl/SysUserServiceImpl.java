@@ -25,6 +25,7 @@ import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.core.toolkit.Wrappers;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
+import com.codingapi.tx.annotation.TxTransaction;
 import com.pig4cloud.pigx.admin.api.dto.UserDTO;
 import com.pig4cloud.pigx.admin.api.dto.UserInfo;
 import com.pig4cloud.pigx.admin.api.entity.*;
@@ -34,6 +35,7 @@ import com.pig4cloud.pigx.admin.mapper.SysUserMapper;
 import com.pig4cloud.pigx.admin.service.*;
 import com.pig4cloud.pigx.common.core.constant.CacheConstants;
 import com.pig4cloud.pigx.common.core.constant.CommonConstants;
+import com.pig4cloud.pigx.common.core.util.CollectionKit;
 import com.pig4cloud.pigx.common.core.util.R;
 import com.pig4cloud.pigx.common.data.datascope.DataScope;
 import com.pig4cloud.pigx.common.security.util.SecurityUtils;
@@ -238,6 +240,34 @@ public class SysUserServiceImpl extends ServiceImpl<SysUserMapper, SysUser> impl
 				.stream()
 				.map(SysDeptRelation::getDescendant)
 				.collect(Collectors.toList());
+	}
+
+	/**
+	 * 保存用户信息
+	 *
+	 * @param userDto DTO 对象
+	 * @return user_id
+	 */
+	@Override
+	@TxTransaction
+	@Transactional(rollbackFor = Exception.class)
+	public String saveUserForAuto(UserDTO userDto) {
+		SysUser sysUser = new SysUser();
+		BeanUtils.copyProperties(userDto, sysUser);
+		sysUser.setDelFlag(CommonConstants.STATUS_NORMAL);
+		sysUser.setPassword(ENCODER.encode(userDto.getPassword()));
+		baseMapper.insert(sysUser);
+		if (!CollectionKit.isEmpty(userDto.getRole())){
+			List<SysUserRole> userRoleList = userDto.getRole()
+					.stream().map(roleId -> {
+						SysUserRole userRole = new SysUserRole();
+						userRole.setUserId(sysUser.getUserId());
+						userRole.setRoleId(roleId);
+						return userRole;
+					}).collect(Collectors.toList());
+			sysUserRoleService.saveBatch(userRoleList);
+		}
+		return sysUser.getUserId().toString();
 	}
 
 }
