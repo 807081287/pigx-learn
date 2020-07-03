@@ -33,7 +33,6 @@ import org.springframework.web.bind.annotation.*;
  * @author lengleng
  * @date 2018-11-06 10:17:18
  */
-@Inner(value = false)
 @RestController
 @AllArgsConstructor
 @RequestMapping("/route")

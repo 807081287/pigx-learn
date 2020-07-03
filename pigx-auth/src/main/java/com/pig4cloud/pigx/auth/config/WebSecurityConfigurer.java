@@ -64,8 +64,7 @@ public class WebSecurityConfigurer extends WebSecurityConfigurerAdapter {
 				.invalidateHttpSession(true)
 				.and()
 				.authorizeRequests()
-				.antMatchers(
-						"/token/**",
+				.antMatchers("/token/**",
 						"/actuator/**",
 						"/mobile/**").permitAll()
 				.anyRequest().authenticated()
