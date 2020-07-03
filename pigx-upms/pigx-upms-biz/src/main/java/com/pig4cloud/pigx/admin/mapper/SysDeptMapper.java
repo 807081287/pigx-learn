@@ -19,6 +19,7 @@
 
 package com.pig4cloud.pigx.admin.mapper;
 
+import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import com.pig4cloud.pigx.admin.api.entity.SysDept;
 import com.pig4cloud.pigx.common.data.datascope.DataScope;
@@ -44,4 +45,5 @@ public interface SysDeptMapper extends BaseMapper<SysDept> {
 	 * @return
 	 */
 	List<SysDept> listDepts(DataScope dataScope);
+
 }

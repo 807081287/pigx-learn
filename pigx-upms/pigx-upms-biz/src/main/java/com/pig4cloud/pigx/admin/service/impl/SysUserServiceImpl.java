@@ -21,6 +21,7 @@ package com.pig4cloud.pigx.admin.service.impl;
 
 import cn.hutool.core.util.ArrayUtil;
 import cn.hutool.core.util.StrUtil;
+import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.core.toolkit.Wrappers;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
@@ -243,7 +244,7 @@ public class SysUserServiceImpl extends ServiceImpl<SysUserMapper, SysUser> impl
 	}
 
 	/**
-	 * 保存用户信息
+	 * 自动创建系统账户
 	 *
 	 * @param userDto DTO 对象
 	 * @return user_id
@@ -268,6 +269,11 @@ public class SysUserServiceImpl extends ServiceImpl<SysUserMapper, SysUser> impl
 			sysUserRoleService.saveBatch(userRoleList);
 		}
 		return sysUser.getUserId().toString();
+	}
+
+	@Override
+	public List<Object> findUserNames(String userIds) {
+		return baseMapper.selectObjs(new QueryWrapper<SysUser>().select("username").in("user_id",userIds));
 	}
 
 }

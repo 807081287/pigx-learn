@@ -26,6 +26,7 @@ import com.pig4cloud.pigx.admin.service.SysDeptRelationService;
 import com.pig4cloud.pigx.admin.service.SysDeptService;
 import com.pig4cloud.pigx.common.core.util.R;
 import com.pig4cloud.pigx.common.log.annotation.SysLog;
+import com.pig4cloud.pigx.common.security.annotation.Inner;
 import io.swagger.annotations.Api;
 import lombok.AllArgsConstructor;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -33,6 +34,7 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
 import java.time.LocalDateTime;
+import java.util.List;
 
 /**
  * <p>
@@ -121,6 +123,16 @@ public class SysDeptController {
 	public R getDescendantList(@PathVariable Integer deptId) {
 		return R.ok(relationService.list(Wrappers.<SysDeptRelation>lambdaQuery()
 				.eq(SysDeptRelation::getAncestor, deptId)));
+	}
+
+	/**
+	 * 根据ID集合查询部门名称
+	 *
+	 * @return 返回名称集合
+	 */
+	@GetMapping(value = "/deptNames/{IdsString}")
+	public List<Object> getDeptNames(@PathVariable String IdsString) {
+		return sysDeptService.selectDeptNames(IdsString);
 	}
 
 }

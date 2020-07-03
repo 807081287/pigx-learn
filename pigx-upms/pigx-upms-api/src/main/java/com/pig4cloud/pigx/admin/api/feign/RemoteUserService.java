@@ -79,4 +79,17 @@ public interface RemoteUserService {
 	 */
 	@PostMapping("/user/autoCreateUser")
 	String user(@RequestBody UserDTO userDto);
+
+	/**
+	 * 通过用户名查询用户、角色信息
+	 *
+	 * @param userIds 用户名
+	 * @param from     调用标志
+	 * @return R
+	 */
+	@GetMapping("/user/userNames/{userIds}")
+	List<Object> userNames(@PathVariable("userIds") String userIds
+			, @RequestHeader(SecurityConstants.FROM) String from);
+
+
 }

@@ -36,6 +36,7 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
+import java.util.List;
 
 /**
  * @author lengleng
@@ -169,9 +170,21 @@ public class SysUserController {
 	 * @param userDto 用户信息
 	 * @return user_id
 	 */
+	@Inner(false)
 	@SysLog("暖通系统自动为经销商创建用户")
 	@PostMapping("/autoCreateUser")
 	public String autoCreateUser(@RequestBody UserDTO userDto) {
 		return userService.saveUserForAuto(userDto);
+	}
+
+	/**
+	 * 获取指定用户全部信息
+	 *
+	 * @return 用户信息
+	 */
+	@Inner
+	@GetMapping("/userNames/{userIds}")
+	public List<Object> getUserNames(@PathVariable String userIds) {
+		return userService.findUserNames(userIds);
 	}
 }

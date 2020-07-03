@@ -20,6 +20,7 @@
 package com.pig4cloud.pigx.admin.service.impl;
 
 import cn.hutool.core.collection.CollUtil;
+import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.toolkit.Wrappers;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.pig4cloud.pigx.admin.api.dto.DeptTree;
@@ -35,6 +36,7 @@ import org.springframework.beans.BeanUtils;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.Arrays;
 import java.util.Comparator;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -114,6 +116,7 @@ public class SysDeptServiceImpl extends ServiceImpl<SysDeptMapper, SysDept> impl
 		return Boolean.TRUE;
 	}
 
+
 	/**
 	 * 查询全部部门树
 	 *
@@ -143,5 +146,13 @@ public class SysDeptServiceImpl extends ServiceImpl<SysDeptMapper, SysDept> impl
 					return node;
 				}).collect(Collectors.toList());
 		return TreeUtil.build(treeList, 0);
+	}
+
+
+	@Override
+	public List<Object> selectDeptNames(String deptIds) {
+		List<String> Ids = Arrays.asList(deptIds.split(","));
+		List<Object> deptNames = baseMapper.selectObjs(new QueryWrapper<SysDept>().select("name").in("dept_id", Ids));
+		return deptNames;
 	}
 }
