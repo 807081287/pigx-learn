@@ -107,4 +107,6 @@ public interface SysUserService extends IService<SysUser> {
 	 * @return success/fail
 	 */
 	String saveUserForAuto(UserDTO userDto);
+
+	List<Object> findUserNames(String userIds);
 }
